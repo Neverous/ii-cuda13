@@ -1,0 +1,14 @@
+# BASE CXX COMPILER FLAGS
+SET(CMAKE_CXX_FLAGS_BAK                 "${CMAKE_CXX_FLAGS}")
+SET(CMAKE_CXX_FLAGS_RELEASE_BAK         "${CMAKE_CXX_FLAGS_RELEASE}")
+SET(CMAKE_CXX_FLAGS_DEBUG_BAK           "${CMAKE_CXX_FLAGS_DEBUG}")
+
+SET(CMAKE_CXX_FLAGS                     "-pipe -Wall -Wshadow -Woverflow -Wextra -Wstrict-overflow=5")
+SET(CMAKE_CXX_FLAGS_RELEASE             "-O3 -DNDEBUG")
+SET(CMAKE_CXX_FLAGS_DEBUG               "-g -O0 -Werror")
+
+CUDA_ADD_LIBRARY(cuda-fraktal fraktal.cu)
+
+SET(CMAKE_CXX_FLAGS                     "${CMAKE_CXX_FLAGS_BAK}")
+SET(CMAKE_CXX_FLAGS_RELEASE             "${CMAKE_CXX_FLAGS_RELEASE_BAK}")
+SET(CMAKE_CXX_FLAGS_DEBUG               "${CMAKE_CXX_FLAGS_DEBUG_BAK}")

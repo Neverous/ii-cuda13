@@ -1,0 +1,92 @@
+GPU_NormalMul - normalne mnożenie każdy wątek liczy jedną komórkę wyniku
+GPU_FastMul - wątki wczytują blokami do pamięci dzielonej i dalej jak wyżej
+GPU_FastestMul - jw bez jednej bariery
+
+CPU_NormalMul - normalne mnożenie macierzy na cpu
+CPU_FastestMul - mnożenie razy macierz transponowana (+transpozycja)
+
+PODSUMOWANIE:
+    * transpozycja Bs nie dawała żadnych sensownych rezultatów
+    * odczyty na As, Bs są coalescent
+    * usunięcie bariery nie zmieniło prawie nic(troszeczkę polepszało) dla GTX560(Fermi), natomiast dla GTX275 skutkuje prawie 2x pogorszeniem wydajności
+    * różnice w wynikach pomiędzy CPU a GPU były mniejsze niż 10^-6
+
+/************************* GTX 560Ti ********************************/
+TILE=8 SIZE=64
+GPU_NormalMul:  178us
+GPU_FastMul:    154us
+GPU_FastestMul: 154us
+
+TILE=8 SIZE=256
+GPU_NormalMul:  1.6ms
+GPU_FastMul:    712us
+GPU_FastestMul: 700us
+
+TILE=8 SIZE=1024
+GPU_NormalMul:  117.9ms
+GPU_FastMul:    30.14ms
+GPU_FastestMul: 31.00ms
+
+TILE=8 SIZE=2048
+GPU_NormalMul:  925.79ms
+GPU_FastMul:    223.61ms
+GPU_FastMul:    224.41ms
+
+TILE=16 SIZE=64
+GPU_NormalMul:  169us
+GPU_FastMul:    147us
+GPU_FastestMul: 145us
+
+TILE=16 SIZE=256
+GPU_NormalMul:  904us
+GPU_FastMul:    579us
+GPU_FastestMul: 577us
+
+TILE=16 SIZE=1024
+GPU_NormalMul:  44.52ms
+GPU_FastMul:    17.97ms
+GPU_FastestMul: 16.90ms
+
+TILE=16 SIZE=2048
+GPU_NormalMul:  341.91ms
+GPU_FastMul:    126.62ms
+GPU_FastestMul: 122.04ms
+
+/************************* GTX 275 ********************************/
+TILE=8 SIZE=256
+GPU_NormalMul:  1.74ms
+GPU_FastMul:    914us
+GPU_FastestMul: 1.02ms
+
+TILE=8 SIZE=2048
+GPU_NormalMul:  631.97ms
+GPU_FastMul:    217.37ms
+GPU_FastestMul: 227.27ms
+
+TILE=16 SIZE=256
+GPU_NormalMul:  1.55ms
+GPU_FastMul:    780us
+GPU_FastestMul: 910us
+
+TILE=16 SIZE=2048
+GPU_NormalMul:  608.68ms
+GPU_FastMul:    93.08ms
+GPU_FastestMul: 180.08ms
+
+/************************* i7 3770 ********************************/
+SIZE=64
+CPU_NormalMul:  337us
+CPU_FastMul:    297us
+
+SIZE=256
+CPU_NormalMul:  16.88ms
+CPU_FastMul:    13.37ms
+
+SIZE=1024
+CPU_NormalMul:  1.37s
+CPU_FastMul:    825.86.ms
+
+/************************* i3 540 ********************************/
+SIZE=1024
+CPU_NormalMul:  13.47s
+CPU_FastMul:    1.13s

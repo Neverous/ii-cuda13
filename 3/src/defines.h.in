@@ -1,0 +1,10 @@
+#ifndef __DEFINES_H__
+#define __DEFINES_H__
+
+#define TILE 16
+#define TESTS 4
+
+#cmakedefine __CPU__    true
+#cmakedefine __CUDA__   true
+
+#endif // __DEFINES_H__

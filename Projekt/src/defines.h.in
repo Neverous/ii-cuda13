@@ -1,0 +1,24 @@
+#ifndef __DEFINES_H__
+#define __DEFINES_H__
+
+// version information
+#define VERSION_MAJOR   @VERSION_MAJOR@
+#define VERSION_MINOR   @VERSION_MINOR@
+#define VERSION_PATCH   @VERSION_PATCH@
+#define VERSION_FULL    "@VERSION_FULL@"
+
+#cmakedefine __CPU__        true
+#cmakedefine __CUDA__       true
+
+#define CPU_WORKERS         2
+
+#define SIMULATION_FPS      24
+
+#define CARS                131072
+
+//#define CROSS_COLLISIONS
+
+#define CUDA_THREADS        224
+//#define CUDA_CACHE
+
+#endif // __DEFINES_H__

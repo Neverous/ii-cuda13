@@ -1,0 +1,168 @@
+% 2014
+% Maciej Szeptuch
+% IIUWr
+
+\documentclass[12pt,leqno]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{a4wide}
+\usepackage[cm]{fullpage}
+
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{amsthm}
+
+%% Kropka po numerze paragrafu, podparagrafu, itp.
+\makeatletter
+    \renewcommand\@seccntformat[1]{\csname the#1\endcsname.\quad}
+    \renewcommand\numberline[1]{#1.\hskip0.7em}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\LARGE \textbf{{Kurs: CUDA}}\\
+      {\Large Projekt: Symulacja ruchu drogowego}\\
+}
+\author{Maciej Szeptuch}
+\date{Wrocław, \today}
+
+\begin{document}
+\thispagestyle{empty}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% PLANOWANE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Planowane}
+\subsection{Krótki opis}
+Symulacja ruchu drogowego w czasie rzeczywistym z wykorzystaniem map
+z OpenStreetMap. Dla określonego kawałka terenu będą losowane pozycje
+startowe i końcowe dla określonej liczby samochodów po czym będzie można
+w czasie rzeczywistym obserwować ich trasę. W miarę możliwości chciałbym
+pozwolić na ustawianie rzeczy typu zbiór pozycji startowych/końcowych,
+możliwość zmiany obszaru. Być może też jakieś przybliżanie/oddalanie mapy
+(z tym że wtedy przydatna będzie też kompresja czasu)
+
+\subsection{Podstawowy plan}
+\begin{itemize}
+    \item Obszar symulacji: okolice placu grunwaldzkiego we Wrocławiu
+    \item Bardzo prosta fizyka ruchu samochodów - przyspieszanie do określonej
+        maksymalnej prędkości na drodze, zachowywanie bezpiecznego odstępu od
+        innych samochodów itd.
+    \item Auta pojawiają się z określoną pozycją startową i końcową
+    \item Parę prostych strategii ruchu (najkrótsza ścieżka, ścieżka
+        reagująca na aktualne obciążenie dróg, itp.)
+
+    \item Zamiast skrzyżowań: tunele i estakady(brak obsługi świateł)
+\end{itemize}
+
+\subsection{Możliwe rozszerzenia}
+\begin{itemize}
+    \item Możliwość zmiany obszaru symulacji(może wczytywanie na żywo
+        z serwerów OSM, albo z pliku bazy)
+
+    \item Możliwość wyboru punktów startowych i końcowych
+    \item Wyłączanie poszczególnych dróg
+    \item Kompresja czasu(przyspieszanie, spowalnianie)
+    \item Obsługa świateł drogowych
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% OSTATECZNA WERSJA %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Ostateczna wersja}
+\subsection{Opis}
+Program pozwala na bardzo uproszczoną symulacje ruchu z użyciem map
+z OpenStreetMap. Wykorzystując załączony importer można pliki osm.pbf (dostępne
+np.\ z \url{http://metro.teczno.com/}) przetworzyć na pliki odczytywane przez
+program. Pozwala to na symulacje z użyciem terenu dowolnego miasta, pod
+warunkiem że zmieści się ono w pamięci. Samochody poruszają się losowo -
+w momencie napotkania skrzyżowania próbują losowo znaleźć pierwszą wolną
+krawędź, na którą mogą przejechać. W momencie w którym to się nie powiedzie
+znajdują nowy punkt startowy i kontynuują losową wędrówkę. Można przybliżać
+dowolny kawałek obszaru, a symulacja dalej kontynuuje na całej wczytanej mapie.
+
+\subsection{(Nie)Zrealizowany plan}
+\begin{itemize}
+    \item Obszar symulacji: dowolny (w granicach rozsądku, możliwości sprzętu)
+    \item Prosta fizyka samochodów: starają się zachowywać bezpieczną odległość,
+        wszystkie mają takie same parametry - przyspieszenie itp.,
+        wykorzystują dostępne z OSM dane do określenia aktualnej maksymalnej
+        dozwolonej prędkości
+    \item Auta pojawiają się w losowych miejscach i poruszają się po mapie
+        w sposób losowy
+    \item Domyślnie badanie kolizji na skrzyżowaniach jest wyłączone, aby je
+        włączyć należy ustawić odpowiednie opcje kompilacji
+    \item Interfejs jest praktycznie nieobecny: jedyne co można robić to
+        poruszać mapą: przesuwać, obracać, przybliżać/oddalać
+    \item Konfiguracja niestety sprowadza się do zmiany opcji w trakcie
+        kompilacji
+    \item W pewien sposób można manipulować mapami, zmieniając je za pomocą
+        narzędzi dostępnych dla OSM po czym importując je do programu
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% INSTRUKCJA OBSŁUGI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Krótka instrukcja obsługi}
+\subsection{Wymagania}
+Program do działania wymaga \textbf{OpenGL}, \textbf{CUDA}, \textbf{QT5} oraz
+\textbf{GLEW}. Do skompilowania programu importującego wymagany jest również
+\textbf{google-protobuf}. Do samej kompilacji jest wymagany program \textbf{CMake}.
+
+\subsection{Kompilacja}
+Pomocne komendy(kompilacja, import mapy) zostały obudowane z użyciem Makefile
+dla prostoty użycia. \\
+Przed samą kompilacją można program nieco dostroić: \\
+W pliku \textbf{CMakeLists.txt} w głównym katalogu znajdują się dwa makra
+\_\_CUDA\_\_, \_\_CPU\_\_ odpowiadają one odpowiednio za obsługę symulacji
+na karcie graficznej oraz na CPU. Można włączyć obydwie metody naraz wtedy
+program będzie starał się równoważyć obciążenie pomiędzy GPU i CPU w celu
+uzyskania jak największej wydajności. \\
+W pliku \textbf{defines.h.in} w katalogu \textbf{src} znajdują się pozostałe
+opcje konfiguracyjne, \\ można zmienić liczbę obsługiwanych rdzeni procesora
+\textbf{CPU\_WORKERS} - w efekcie liczbę wątków próbujących rozłożyć
+obciążenie pomiędzy wszystkie dostępne rdzenie; dokładność/szybkość
+symulacji \textbf{SIMULATION\_FPS} domyślnie 24 kroki symulacji na sekundę;
+liczba samochodów \textbf{CARS} jest domyślnie ustawiona na 131072;
+można również eksperymentalnie uruchomić pełne badanie kolizji
+\textbf{CROSS\_COLLISIONS} na skrzyżowaniach, niestety z powodu specyfiki
+map OSM sprawia to, że bardzo szybko dochodzi do zakleszczenia przez co
+większość samochodów przestaje jeździć tylko stoi na skrzyżowaniu bo nie
+mają gdzie się ruszyć. \\
+W tym pliku są także dostępne opcje dostosowywania CUDA, a mianowicie
+liczba wątków \textbf{CUDA\_THREADS} oraz \textbf{CUDA\_CACHE} opcja
+odpowiedzialna za wyłączenie używania pamięci shared - przydatna na
+nowszych kartach (np.\ GTX 560 Ti) gdzie cache L2 zapewnia znacznie
+większą wydajność niż gdy używamy pamięci shared. \\ \\
+
+Sama kompilacja sprowadza się do wywołania komendy \textbf{make} lub
+\textbf{make release} w głównym folderze, które odpowiednio skompilują
+program w trybie debugowania lub w trybie maksymalnej wydajności.
+Gdy komendy te się powiodą w katalogu \textbf{build} będą dostępne
+binarki \textbf{trafficsim} oraz \textbf{trafficsim-import} (o ile
+mamy google-protobuf) - odpowiednio symulator oraz program do importowania
+danych z pliku osm.pbf. \\
+
+\subsection{Uruchomienie}
+Program \textbf{trafficsim-import} przyjmuje za argumenty plik osm.pbf
+z danymi z OpenStreetMap oraz docelowe miejsce w którym ma zapisać
+przetworzone dane. Dla wygody w pliku makefile zostały zdefiniowane
+makra które pozwalają na przetworzenie plików wroclaw.osm.pbf,
+poland.osm.pbf, tokyo.osm.pbf, planet.osm.pbf (które można pobrać
+z już wspomnianej strony \url{http://metro.teczno.com/}) - odpowiednio
+\textbf{make wroclaw}, \textbf{make poland}, \textbf{make tokyo},
+\textbf{make planet} - o ile znajdują się one w podkatalogu \textbf{data}. \\ \\
+
+Program \textbf{trafficsim} nie przyjmuje żadnych argumentów, zakłada
+że w katalogu uruchomienia znajduję się plik \textbf{map.dat} z przetworzonymi
+danymi mapy. Również dla wygody w Makefile zostało zdefiniowane makro
+\textbf{make run}, które uruchamia go w katalogu data. Co pozwala na przykład
+na wywołanie \textbf{make wroclaw}, \textbf{make run} co powinno uruchomić symulację
+na mapie Wrocławia.
+
+\end{document}

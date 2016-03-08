@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>shaders/map.vertex.glsl</file>
+    <file>shaders/map.fragment.glsl</file>
+    <file>shaders/car.vertex.glsl</file>
+    <file>shaders/car.fragment.glsl</file>
+    <file>shaders/gui.vertex.glsl</file>
+    <file>shaders/gui.fragment.glsl</file>
+</qresource>
+</RCC>

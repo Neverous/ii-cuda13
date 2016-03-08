@@ -1,0 +1,10 @@
+#ifndef __DEFINES_H__
+#define __DEFINES_H__
+#define S 8
+
+#cmakedefine __CPU__    true
+#cmakedefine __ISPC__   true
+#cmakedefine __CUDA__   true
+#cmakedefine __OPENCL__ true
+
+#endif // __DEFINES_H__

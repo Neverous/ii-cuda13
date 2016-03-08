@@ -1,0 +1,6 @@
+Wymagania: CMake, [CUDA, ISPC, OpenCL].
+Można wyłączać odpowiednie wersje(__CPU__, __CUDA__, __OPENCL__, __ISPC__) w CMakeLists.txt.
+Kompilacja: make, binarka "fraktal" pojawi sie w build/.
+
+W wersji OpenCL za pierwszym uruchomieniem jest kompilowany kernel co sprawia że jest dużo wolniej niz cuda/cpu. W następnych uruchomieniach binarka jest już zcacheowana i wydajność staje się porównywalna do CUDA.
+

@@ -1,0 +1,3 @@
+*.ppm
+src/defines.h
+src/ispc/fraktal_ispc.h
